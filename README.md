@@ -1,4 +1,4 @@
-# Cyclone WP5 "naas"
+# Cyclone WP5 "Network as a Service"
 
 This contains necessary files to automate network configuration on the fly.
 
