@@ -8,7 +8,7 @@ ERR_UNZIP=4
 ERR_INSTALL_DOCKER=5
 ERR_BUILD_DOCKER=6
 ERR_RUN_DOCKER=7
-sudo su
+
 apt-get -y update
 apt-get -y upgrade
 apt-get -y install unzip apache2 easy-rsa openssl
@@ -41,6 +41,54 @@ if [ $? -ne 0 ] ; then
     echo "Error : can't install docker"
     exit $ERR_INSTALL_DOCKER
 fi
+
+cat <<EOF_VPNCONF > /tmp/cnsmo-net-services-master/src/main/docker/vpn/client/client.conf
+client
+
+dev tap
+;dev tun
+
+;dev-node MyTap
+
+;proto tcp
+proto udp
+
+remote 134.158.75.63 1194
+;remote my-server-2 1194
+
+;remote-random
+
+resolv-retry infinite
+
+nobind
+
+;user nobody
+;group nobody
+
+persist-key
+persist-tun
+
+;http-proxy-retry # retry on connection failures
+;http-proxy [proxy server] [proxy port #]
+
+;mute-replay-warnings
+
+ca ca.crt
+cert client.crt
+key client.key
+
+;ns-cert-type server
+
+;tls-auth ta.key 1
+
+;cipher x
+
+comp-lzo
+
+verb 3
+
+;mute 20
+EOF_VPNCONF
 
 docker build -t vpn-client .
 if [ $? -ne 0 ] ; then
